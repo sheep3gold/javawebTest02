@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>省市区三级联动</h2>
+
+省&nbsp;
+<select name="province" id="province" onchange="changeCities(this.value)">
+    <option value="">--请选择--</option>
+
+</select>
+
+市&nbsp;
+<select name="city" id="city" onchange="changeAreas(this.value)">
+    <option value="">--请选择--</option>
+
+</select>
+
+区&nbsp;
+<select name="area" id="area">
+    <option value="">--请选择--</option>
+
+</select>
+<script src="js/jquery-2.1.0.min.js"></script>
+<script>
+    //jquery的页面加载完成事件
+    $(function () {
+        //ajax请求所有的省的信息
+        $.ajax({
+            url: "FindAllProvinceServlet",
+            dataType: "json",
+            success: function (res) {
+                /**
+                 *  [
+                 *      {id:v1,pid:v2,name:v3},
+                 *      {id:v1,pid:v2,name:v3}
+
+                 *  ]
+                 *
+                 */
+                //遍历
+                for (var i = 0; i < res.length; i++) {
+                    //创建option标签独享   <option></option>
+                    var $option = $("<option></option>");
+                    //设置option标签的value属性和文本内容
+                    $option.attr("value", res[i].id).html(res[i].name);
+                    //将省的option标签追加到省的下拉列表框下
+                    $("#province").append($option);
+                }
+            }
+        });
+    });
+
+        function changeCities(pid) {
+
+            //ajax请求获取当前选中的省的城市信息
+            $.ajax({
+                url: "FindPcdByPidServlet",
+                data: {"pid": pid},
+                dataType: "json",
+                success: function (res) {
+                    /**
+                     *  [
+                     *      {id:v1,pid:v2,name:v3},
+                     *       {id:v1,pid:v2,name:v3},
+                     *  ]
+                     *
+                     */
+
+                    //先清空原先的城市信息
+                    $("#city").html("<option value=\"\">--请选择--</option>");
+                    for (var i = 0; i < res.length; i++) {
+                        //创建option标签对象，<option></option>
+                        var $option = $("<option></option>");
+                        //设置option标签的value属性以及文本值
+                        $option.attr("value", res[i].id).html(res[i].name);
+                        //向城市的下拉列表框下填充option
+                        $("#city").append($option);
+                    }
+                }
+            });
+        }
+    function changeAreas(pid) {
+
+        //ajax请求获取当前选中的省的城市信息
+        $.ajax({
+            url: "FindPcdByPidServlet",
+            data: {"pid": pid},
+            dataType: "json",
+            success: function (res) {
+                /**
+                 *  [
+                 *      {id:v1,pid:v2,name:v3},
+                 *       {id:v1,pid:v2,name:v3},
+                 *  ]
+                 *
+                 */
+
+                //先清空原先的城市信息
+                $("#area").html("<option value=\"\">--请选择--</option>");
+                for (var i = 0; i < res.length; i++) {
+                    //创建option标签对象，<option></option>
+                    var $option = $("<option></option>");
+                    //设置option标签的value属性以及文本值
+                    $option.attr("value", res[i].id).html(res[i].name);
+                    //向城市的下拉列表框下填充option
+                    $("#area").append($option);
+                }
+            }
+        });
+    }
+
+</script>
+</body>
+</html>
